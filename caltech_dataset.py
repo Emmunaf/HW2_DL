@@ -2,14 +2,14 @@ from torchvision.datasets import VisionDataset
 
 from PIL import Image
 
+import os
+import os.path
+import sys
+
 import pandas as pd
 import numpy as np
 from sklearn import preprocessing
 from sklearn.model_selection import train_test_split
-
-import os
-import os.path
-import sys
 
 
 def pil_loader(path):
