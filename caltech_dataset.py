@@ -21,7 +21,7 @@ class Caltech(VisionDataset, blacklisted_classes=[]):
         self.split = split # This defines the split you are going to use
                            # (split files are called 'train.txt' and 'test.txt')
             
-        self.blacklist_classes = blacklisted_classes
+        #self.blacklist_classes = blacklisted_classes  # Needed just is using custom mapper
         '''
         - Here you should implement the logic for reading the splits files and accessing elements
         - If the RAM size allows it, it is faster to store all data in memory
@@ -31,7 +31,15 @@ class Caltech(VisionDataset, blacklisted_classes=[]):
         - Labels should start from 0, so for Caltech you will have lables 0...100 (excluding the background class) 
         '''
         
+        split_path = os.path.join(root, split+".txt")
+        split_file = np.loadtxt(split_path, dtype='str')
         
+        image_with_label_list = [[pil_loader('/content/Caltech101/101_ObjectCategories/'+image_path), image_path.split('/')[0]] 
+                                     for image_path in split_file if not image_path.split('/')[0] in blacklisted_classes]
+        self.data = pd.DataFrame(image_with_label_list, columns=['image', 'class'])
+        
+        le = preprocessing.LabelEncoder()
+        self.data['encoded_class'] = le.fit_transform(self.data['class'])        
 
     def __getitem__(self, index):
         '''
@@ -43,7 +51,7 @@ class Caltech(VisionDataset, blacklisted_classes=[]):
             tuple: (sample, target) where target is class_index of the target class.
         '''
 
-        image, label = ... # Provide a way to access image and label via index
+        image, label = self.data.iloc[index]['image'], self.data.iloc[index]['encoded_class'] # Provide a way to access image and label via index
                            # Image should be a PIL Image
                            # label can be int
 
@@ -58,9 +66,10 @@ class Caltech(VisionDataset, blacklisted_classes=[]):
         The __len__ method returns the length of the dataset
         It is mandatory, as this is used by several other components
         '''
-        length = ... # Provide a way to get the length (number of elements) of the dataset
+        length = len(self.data) # Provide a way to get the length (number of elements) of the dataset
         return length
     
+    ''' Custom implementation for class mapping. Note: Not using it (now using preprocessing module). Just implemented to be sure
     def _get_class_map(self, path):
         """
         Retrieve a list of the class folders and a dict containing the mapping classname->id .
@@ -74,3 +83,4 @@ class Caltech(VisionDataset, blacklisted_classes=[]):
         class_list = list(set(class_list))  # Implicitly ordering 'cause of set() call
         class_map = {class_list[i]: i for i in range(len(class_list))}  # {"ExClass1": 1, "ExClass2": 2, ..}
         return class_list, class_map
+        '''
