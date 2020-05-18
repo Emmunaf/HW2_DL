@@ -102,4 +102,18 @@ class Caltech(VisionDataset):
         """
 
         X_train, X_val = train_test_split(self.data, test_size=val_size, stratify=self.data['encoded_class'] )
-        return X_train.index.values, X_val.index.values
+    
+        # Get (not contiguous) indexes for a stratified split 
+        train_indexes, val_indexes = X_train.index.values, X_val.index.values
+
+        # Create an ordered dataframe to have contiguous index ranges (ie. 0-2000, 2000-4000)
+        new_train_dataset = self.data.filter(train_indexes, axis=0)
+        new_val_dataset = self.data.filter(val_indexes, axis=0)
+        new_dataset = pd.DataFrame(new_train_dataset).reset_index(drop=True)
+        new_dataset = new_dataset.append(new_val_dataset, ignore_index=True)
+        # Assign new dataframe to data attribute
+        self.data = new_dataset
+        # Define the contiguous indexes by using just length
+        train_indexes, val_indexes = list(range(len(train_indexes))), list(range(len(train_indexes), len(train_indexes)+len(X_val.index.values)))
+
+        return train_indexes, val_indexes
