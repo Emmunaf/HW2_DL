@@ -84,3 +84,16 @@ class Caltech(VisionDataset, blacklisted_classes=[]):
         class_map = {class_list[i]: i for i in range(len(class_list))}  # {"ExClass1": 1, "ExClass2": 2, ..}
         return class_list, class_map
         '''
+    
+    def split_data(self, val_size=0.5):
+        """
+        Split the train set in to train and validation set (stratified sampling)
+        
+        args:
+            val_size: If float, should be between 0.0 and 1.0 and represent the proportion of the dataset to include for validation
+        returns:
+            (train_indexes[], val_indexes[]): lists of indexes for train and validation split.
+        """
+
+        X_train, X_val = train_test_split(self.data, test_size=val_size, stratify=self.data['encoded_class'] )
+        return X_train.index.values, X_val.index.values
