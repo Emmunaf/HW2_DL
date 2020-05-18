@@ -14,8 +14,8 @@ def pil_loader(path):
         return img.convert('RGB')
 
 
-class Caltech(VisionDataset, blacklisted_classes=[]):
-    def __init__(self, root, split='train', transform=None, target_transform=None):
+class Caltech(VisionDataset):
+    def __init__(self, root, split='train', transform=None, target_transform=None, blacklisted_classes=[]):
         super(Caltech, self).__init__(root, transform=transform, target_transform=target_transform)
 
         self.split = split # This defines the split you are going to use
