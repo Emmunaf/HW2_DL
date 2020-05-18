@@ -37,7 +37,7 @@ class Caltech(VisionDataset):
         - Labels should start from 0, so for Caltech you will have lables 0...100 (excluding the background class) 
         '''
         
-        split_path = os.path.join(root, split+".txt")
+        split_path = os.path.join(root, "../", split+".txt")
         split_file = np.loadtxt(split_path, dtype='str')
         
         image_with_label_list = [[pil_loader('/content/Caltech101/101_ObjectCategories/'+image_path), image_path.split('/')[0]] 
