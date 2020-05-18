@@ -20,6 +20,8 @@ def pil_loader(path):
 
 
 class Caltech(VisionDataset):
+    import numpy as np
+
     def __init__(self, root, split='train', transform=None, target_transform=None, blacklisted_classes=[]):
         super(Caltech, self).__init__(root, transform=transform, target_transform=target_transform)
 
