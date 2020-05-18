@@ -14,13 +14,14 @@ def pil_loader(path):
         return img.convert('RGB')
 
 
-class Caltech(VisionDataset):
+class Caltech(VisionDataset, blacklisted_classes=[]):
     def __init__(self, root, split='train', transform=None, target_transform=None):
         super(Caltech, self).__init__(root, transform=transform, target_transform=target_transform)
 
         self.split = split # This defines the split you are going to use
                            # (split files are called 'train.txt' and 'test.txt')
-
+            
+        self.blacklist_classes = blacklisted_classes
         '''
         - Here you should implement the logic for reading the splits files and accessing elements
         - If the RAM size allows it, it is faster to store all data in memory
@@ -29,6 +30,8 @@ class Caltech(VisionDataset):
           through the index
         - Labels should start from 0, so for Caltech you will have lables 0...100 (excluding the background class) 
         '''
+        
+        
 
     def __getitem__(self, index):
         '''
@@ -57,3 +60,17 @@ class Caltech(VisionDataset):
         '''
         length = ... # Provide a way to get the length (number of elements) of the dataset
         return length
+    
+    def _get_class_map(self, path):
+        """
+        Retrieve a list of the class folders and a dict containing the mapping classname->id .
+        
+        args:
+            path: Directory path containing the class folder.
+        return:
+            (classes, class_map): where classes are the folder name in path; class_map is a dictionary.
+        """
+        class_list = [d.name for d in os.scandir(path) if (d.is_dir() and (d.name not in self.blacklisted_classes))]
+        class_list = list(set(class_list))  # Implicitly ordering 'cause of set() call
+        class_map = {class_list[i]: i for i in range(len(class_list))}  # {"ExClass1": 1, "ExClass2": 2, ..}
+        return class_list, class_map
