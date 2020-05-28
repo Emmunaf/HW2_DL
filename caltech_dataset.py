@@ -117,3 +117,8 @@ class Caltech(VisionDataset):
         train_indexes, val_indexes = list(range(len(train_indexes))), list(range(len(train_indexes), len(train_indexes)+len(X_val.index.values)))
 
         return train_indexes, val_indexes
+    
+    def get_classes(self):
+        """Return the classes """
+        
+        return self.data['class']
