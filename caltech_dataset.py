@@ -120,13 +120,13 @@ class Caltech(VisionDataset):
         return train_indexes, val_indexes
     
     def get_classes(self):
-        """Return the classes """
+        """Return the classes as list """
         
-        return self.data['class']
+        return self.le.classes_#self.data['class']
     
     def get_encoded_classes(self):
         """Return the ecoded classes mapping dict"""
         
-        class_mapping = {k:self.le.inverse_transform(k) for k in self.le.classes_}
+        class_mapping = {self.le.transform(v):v for v in self.le.classes_}
         return class_mapping
 
