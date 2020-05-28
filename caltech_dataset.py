@@ -45,6 +45,7 @@ class Caltech(VisionDataset):
         self.data = pd.DataFrame(image_with_label_list, columns=['image', 'class'])
         
         le = preprocessing.LabelEncoder()
+        self.le = le
         self.data['encoded_class'] = le.fit_transform(self.data['class'])        
 
     def __getitem__(self, index):
@@ -122,3 +123,10 @@ class Caltech(VisionDataset):
         """Return the classes """
         
         return self.data['class']
+    
+    def get_encoded_classes(self):
+        """Return the ecoded classes mapping dict"""
+        
+        class_mapping = {k:self.le.inverse_transform(k) for k in self.le.classes_}
+        return class_mapping
+
